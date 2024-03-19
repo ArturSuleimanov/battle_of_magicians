@@ -1,2 +1,3 @@
 # battle_of_magicians
-InterviewTask
+InterviewTask<br>
+Use swagger to register user
