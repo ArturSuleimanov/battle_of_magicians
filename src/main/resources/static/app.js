@@ -11,20 +11,6 @@ const stompClient = new StompJs.Client({
 let userName;
 getUser();
 
-function getUser() {
-    fetch(`http://${host}/api/v1/users`, {
-        headers: {
-            'Accept': 'application/json'
-        }})
-        .then(response => response.text())
-        .then(text => showUserInfo(JSON.parse(text)));
-}
-
-function showUserInfo(message) {
-    userName = message.username;
-    $("#user-info").append("Username:<br>" + message.username + "<br>Health:</br>" + "<p id='health'>"+message.health + "</p>");
-}
-
 stompClient.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
@@ -42,15 +28,6 @@ stompClient.onConnect = (frame) => {
         showEnemies(JSON.parse(participiants.body));
     })
 };
-
-function showEnemies(enemies) {
-    let enemiesList = $("#enemy-select");
-    enemiesList.empty();
-    for (let enemy of enemies) {
-        if (enemy === userName) continue;
-        enemiesList.append("<option value='" + enemy+ "'>" + enemy + "</option>");
-    }
-}
 
 stompClient.onWebSocketError = (error) => {
     console.error('Error with websocket', error);
@@ -90,6 +67,24 @@ function sendPunch() {
     });
 }
 
+function getUser() {
+    fetch(`http://${host}/api/v1/users`, {
+        headers: {
+            'Accept': 'application/json'
+        }})
+        .then(response => response.text())
+        .then(text => showUserInfo(JSON.parse(text)));
+}
+
+function showEnemies(enemies) {
+    let enemiesList = $("#enemy-select");
+    enemiesList.empty();
+    for (let enemy of enemies) {
+        if (enemy === userName) continue;
+        enemiesList.append("<option value='" + enemy+ "'>" + enemy + "</option>");
+    }
+}
+
 function showGreeting(message) {
     $("#greetings").append("<tr><td>" + message + "</td></tr>");
 }
@@ -97,6 +92,11 @@ function showGreeting(message) {
 function showHealth(punch) {
     if (punch === 100) disconnect();
     $("#health").text(punch);
+}
+
+function showUserInfo(message) {
+    userName = message.username;
+    $("#user-info").append("Username:<br>" + message.username + "<br>Health:</br>" + "<p id='health'>"+message.health + "</p>");
 }
 
 $(function () {
